@@ -48,3 +48,10 @@ export interface CityListProps {
     cities: Coordinates[];
     onSelect: (city: Coordinates) => void
 }
+
+export interface WeatherReturn {
+    data: CurrentWeather | null;
+    isLoading: boolean;
+    error: string | null;
+    receiveWeather: (lat :number, lon: number) => Promise<void>
+}
