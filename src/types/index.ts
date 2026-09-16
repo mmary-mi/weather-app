@@ -24,7 +24,7 @@ export interface CurrentWeather {
     visibility: number;
     wind: {
         speed: number;
-        gust: number;
+        gust?: number;
     };
     clouds: {
         all: number;
@@ -54,4 +54,8 @@ export interface WeatherReturn {
     isLoading: boolean;
     error: string | null;
     receiveWeather: (lat :number, lon: number) => Promise<void>
+}
+
+export interface WeatherCardProps {
+    weather: CurrentWeather;
 }
