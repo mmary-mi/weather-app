@@ -93,3 +93,10 @@ export type ForecastItem = FiveDayWeather["list"][number]
 export interface ForecastProps {
     forecast: FiveDayWeather;
 }
+
+export interface FavoritesState {
+    items: Coordinates[]
+}
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
