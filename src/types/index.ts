@@ -59,3 +59,37 @@ export interface WeatherReturn {
 export interface WeatherCardProps {
     weather: CurrentWeather;
 }
+
+export interface FiveDayWeather {
+    list: {
+        main: {
+            temp: number;
+            temp_min: number;
+            temp_max: number;
+            pressure: number;
+            humidity: number;
+        };
+        weather:{
+            main: string;
+            description:string;
+        }[];
+        pop: number;
+        sys: {
+            pod: string
+        };
+        dt_txt: string;
+    }[]
+}
+
+export interface ForecastReturn {
+    data: FiveDayWeather | null;
+    isLoading: boolean;
+    error: string | null;
+    receiveForecast: (lat: number, lon: number) => Promise<void>
+}
+
+export type ForecastItem = FiveDayWeather["list"][number]
+
+export interface ForecastProps {
+    forecast: FiveDayWeather;
+}

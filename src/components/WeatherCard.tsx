@@ -6,8 +6,8 @@ export const WeatherCard = ({ weather }: WeatherCardProps) => {
             <h2>{weather.name}</h2>
             <p>{weather.main.temp}°C</p>
             <p>{weather.weather[0].description}</p>
-            <p>от: {weather.main.temp_min}°C до:{weather.main.temp_max}°C</p>
-            <p>Ощущается как:{weather.main.feels_like}°C</p>
+            <p>от: {weather.main.temp_min}°C до: {weather.main.temp_max}°C</p>
+            <p>Ощущается как: {weather.main.feels_like}°C</p>
             <p>Давление: {weather.main.pressure}мм рт.ст.</p>
             <p>Влажность: {weather.main.humidity}%</p>
             <p>Видимость: {weather.visibility / 1000}км</p>
