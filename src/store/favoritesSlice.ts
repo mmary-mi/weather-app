@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice} from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Coordinates, FavoritesState } from "../types";
 
 const initialState: FavoritesState = {
@@ -16,10 +17,12 @@ const favoritesSlice = createSlice({
             } else {
                 state.items.push(action.payload)
             }
-        
+        },
+        setFavorites: (state, action: PayloadAction<Coordinates[]>) => {
+            state.items = action.payload
         }
     }
 })
 
-export const { toggleFavorite } = favoritesSlice.actions;
+export const { toggleFavorite, setFavorites } = favoritesSlice.actions;
 export default favoritesSlice.reducer;

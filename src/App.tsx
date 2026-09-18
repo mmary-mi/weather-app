@@ -4,40 +4,77 @@ import { useWeather } from "./hooks/useWeather";
 import { WeatherCard } from "./components/WeatherCard";
 import { useForecast } from "./hooks/useForecast";
 import { Forecast } from "./components/Forecast";
+import type { Coordinates } from "./types";
+import { useEffect, useState } from "react";
+import { setFavorites } from "./store/favoritesSlice";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { FavoriteList } from "./components/FavoriteList";
 
 function App() {
   const { data: cities, isLoading: citiesLoading, error: citiesError, search } = useCoordinates();
   const { data: weather, isLoading: weatherLoading, error: weatherError, receiveWeather } = useWeather();
-   const { data: forecast, isLoading: forecastLoading, error: forecastError, receiveForecast } = useForecast();
+  const { data: forecast, isLoading: forecastLoading, error: forecastError, receiveForecast } = useForecast();
 
-   function getReceiveWeather(city) {
+  const [selectedCity, setSelectedCity] = useState<Coordinates | null>(null);
+
+  const [isInitialized, setIsInitialized] = useState(false);
+  const dispatch = useAppDispatch();
+  const favorites = useAppSelector((state) => state.favorites.items)
+
+  function getReceiveWeather(city: Coordinates) {
     receiveWeather(city.lat, city.lon)
     receiveForecast(city.lat, city.lon)
-   }
+  }
+
+  useEffect(() => {
+   try { const saved = localStorage.getItem('favorites');
+    if(saved) {
+      dispatch(setFavorites(JSON.parse(saved)))
+    }} catch (err) {
+      console.error('Ошибка чтения localStorage:', err)
+    }
+    setIsInitialized(true);
+  }, [])
+
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem('favorites', JSON.stringify(favorites))
+    }
+  }, [favorites, isInitialized])
 
   return (
     <>
       <button
-        onClick={() => search('London')}
-      > London</button>
+        onClick={() => search('Минск')}
+      > Найти</button>
+
+      <FavoriteList onSelect={(city) => {
+        setSelectedCity(city)
+        getReceiveWeather(city)
+      }} />
 
       {citiesLoading && <p>Ищу город</p>}
       {citiesError && <p>{citiesError}</p>}
       {!citiesLoading && !citiesError && (
         <CityList
           cities={cities}
-          onSelect={(city) => getReceiveWeather(city)}
+          onSelect={(city) => {
+            setSelectedCity(city)
+            getReceiveWeather(city)
+          }}
         />
       )}
 
       {weatherLoading && <p>Загружаю погоду</p>}
       {weatherError && <p>{weatherError}</p>}
-      {weather && !weatherLoading && <WeatherCard weather={weather} />}
+      {weather && !weatherLoading && selectedCity && (
+        <WeatherCard weather={weather} city={selectedCity} />
+        )}
 
       {forecastLoading && <p>Загружаю погоду</p>}
       {forecastError && <p>{forecastError}</p>}
-      {forecast && !forecastLoading && <Forecast forecast={forecast}/>}
-      
+      {forecast && !forecastLoading && <Forecast forecast={forecast} />}
+
     </>
   )
 }

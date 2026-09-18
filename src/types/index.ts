@@ -58,6 +58,7 @@ export interface WeatherReturn {
 
 export interface WeatherCardProps {
     weather: CurrentWeather;
+    city: Coordinates;
 }
 
 export interface FiveDayWeather {
@@ -91,12 +92,13 @@ export interface ForecastReturn {
 export type ForecastItem = FiveDayWeather["list"][number]
 
 export interface ForecastProps {
-    forecast: FiveDayWeather;
+    forecast: FiveDayWeather
 }
 
 export interface FavoritesState {
     items: Coordinates[]
 }
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export interface FavoriteListProps {
+    onSelect: (city: Coordinates) => void
+}
