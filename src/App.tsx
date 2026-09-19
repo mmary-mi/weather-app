@@ -10,6 +10,7 @@ import { setFavorites } from "./store/favoritesSlice";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { FavoriteList } from "./components/FavoriteList";
 import { useGeolocation } from "./hooks/useGeolocation";
+import { SearchInput } from "./components/SearchInput";
 
 function App() {
   const { data: cities, isLoading: citiesLoading, error: citiesError, search } = useCoordinates();
@@ -54,9 +55,8 @@ function App() {
 
   return (
     <>
-      <button
-        onClick={() => search('Минск')}
-      > Найти</button>
+      <SearchInput
+        onSearch={(value)=> search(value)} />
 
       <button
         onClick={getGeolocation}

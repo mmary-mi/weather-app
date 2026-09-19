@@ -112,3 +112,7 @@ export interface GeolocationReturn {
     error: string | null;
     getGeolocation: () => void;
 }
+
+export interface SearchInputProps {
+    onSearch : (value: string) => void;
+}
