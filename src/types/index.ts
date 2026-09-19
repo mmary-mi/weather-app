@@ -102,3 +102,13 @@ export interface FavoritesState {
 export interface FavoriteListProps {
     onSelect: (city: Coordinates) => void
 }
+
+export interface GeolocationReturn {
+    data: {
+        lat: number;
+        lon: number
+    } | null;
+    isLoading: boolean;
+    error: string | null;
+    getGeolocation: () => void;
+}

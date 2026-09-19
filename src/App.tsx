@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { setFavorites } from "./store/favoritesSlice";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { FavoriteList } from "./components/FavoriteList";
+import { useGeolocation } from "./hooks/useGeolocation";
 
 function App() {
   const { data: cities, isLoading: citiesLoading, error: citiesError, search } = useCoordinates();
@@ -40,13 +41,30 @@ function App() {
     if (isInitialized) {
       localStorage.setItem('favorites', JSON.stringify(favorites))
     }
-  }, [favorites, isInitialized])
+  }, [favorites, isInitialized]);
+
+  const {data: geoData, isLoading: geoIsLoading, error: geoError, getGeolocation} = useGeolocation();
+
+  useEffect(() => {
+    if (geoData) {
+      receiveWeather(geoData.lat, geoData.lon);
+      receiveForecast(geoData.lat, geoData.lon)
+    }
+  },[geoData])
 
   return (
     <>
       <button
         onClick={() => search('Минск')}
       > Найти</button>
+
+      <button
+        onClick={getGeolocation}
+      >Найти меня
+      </button>
+
+      {geoIsLoading && <p>Определяю местоположение</p>}
+      {geoError && <p>{geoError}</p>}
 
       <FavoriteList onSelect={(city) => {
         setSelectedCity(city)
