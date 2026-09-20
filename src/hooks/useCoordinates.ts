@@ -21,5 +21,7 @@ export const useCoordinates = (): CoordinatesReturn => {
         }
     }
 
-    return {data, isLoading, error, search}
+    const clear = () => setData([])
+
+    return {data, isLoading, error, search, clear}
 }

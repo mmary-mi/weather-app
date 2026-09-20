@@ -41,7 +41,8 @@ export interface CoordinatesReturn {
     data: Coordinates[];
     isLoading: boolean;
     error: string | null;
-    search: (cityName: string) => Promise<void>
+    search: (cityName: string) => Promise<void>;
+    clear: () => void
 }
 
 export interface CityListProps {
@@ -100,7 +101,8 @@ export interface FavoritesState {
 }
 
 export interface FavoriteListProps {
-    onSelect: (city: Coordinates) => void
+    onSelect: (city: Coordinates) => void;
+    isOpen: boolean
 }
 
 export interface GeolocationReturn {
@@ -115,4 +117,7 @@ export interface GeolocationReturn {
 
 export interface SearchInputProps {
     onSearch : (value: string) => void;
+    children?: React.ReactNode;
+    onSelectCity?: () => void;
 }
+
