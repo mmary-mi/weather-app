@@ -2,7 +2,6 @@ import { SearchInput } from "./SearchInput";
 import LoadingButton from "@mui/lab/LoadingButton"
 import { Button } from "@mui/material";
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
-import PinDropRoundedIcon from '@mui/icons-material/PinDropRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 
 interface HeaderProps {
@@ -16,44 +15,57 @@ interface HeaderProps {
 
 export const Header = ({ onSearch, onGeolocation, onToggleFavorites, geoIsLoading, citiesSlot, favoritesSlot }: HeaderProps) => {
 
-     
-    return(
+    const glassButtonSx = {
+        bgcolor: 'rgba(255,255,255,0.1)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        color: '#fff',
+        borderRadius: 3,
+        boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+        px: 3,
+        textTransform: 'none',
+        '&:hover': {
+            bgcolor: 'rgba(255,255,255,0.18)',
+            borderColor: 'rgba(255,255,255,0.35)',
+        },
+    };
+
+    return (
         <div
             style={{
                 display: 'flex',
                 gap: '30px',
-                margin: '30px' 
+                padding: '30px'
             }}
         >
-            <div style ={{ flex:1, display: 'flex', justifyContent: 'center' }}>
-                <SearchInput 
-                onSearch={onSearch}
-            >
-            {citiesSlot}
-            </SearchInput>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                <SearchInput
+                    onSearch={onSearch}
+                >
+                    {citiesSlot}
+                </SearchInput>
             </div>
 
             <LoadingButton
                 onClick={onGeolocation}
-                loadingPosition="start" 
+                loading={geoIsLoading}
+                loadingPosition="start"
                 startIcon={<LocationOnRoundedIcon />}
-            > Найти меня</LoadingButton>
+                sx={glassButtonSx}
+            >
+                Найти меня
+            </LoadingButton>
 
-            <Button
-                startIcon={<PinDropRoundedIcon />}
-            > Карта</Button>
-
-            <div data-dropdown style={{ position: 'relative'}}>
+            <div data-dropdown style={{ position: 'relative' }}>
                 <Button
                 onClick={onToggleFavorites}
                 startIcon={<FavoriteRoundedIcon />}
-            > Избранное
+                sx={glassButtonSx}
+            >
+                Избранное
             </Button>
             {favoritesSlot}
             </div>
-            
-
-
         </div>
     )
 }

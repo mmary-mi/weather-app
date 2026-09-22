@@ -10,6 +10,7 @@ export interface Coordinates {
 export interface CurrentWeather {
     name: string;
     weather: {
+        id: number;
         main: string;
         description: string;
     }[];

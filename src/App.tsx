@@ -11,7 +11,13 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { FavoriteList } from "./components/FavoriteList";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { Header } from "./components/Header";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { getBackground } from "./utils/getBackground";
+import { PageBackground } from "./components/PageBackground";
+import { Rain } from "./components/Rain";
+import { Snow } from "./components/Snow";
+import { getWeatherImage } from "./utils/getWeatherImage";
+import { Widget } from "./components/Widget";
 
 function App() {
   const { data: cities, isLoading: citiesLoading, error: citiesError, search, clear } = useCoordinates();
@@ -67,60 +73,106 @@ function App() {
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [clear])
+  }, [clear]);
+
+  const heroBg = getBackground(weather?.weather[0].main)
+
+  const main = weather?.weather[0].main;
+  const weatherId = weather?.weather[0].id;
+  const isRain = main === 'Rain' || main === 'Drizzle' || main === 'Thunderstorm';
+  const isSnow = main === 'Snow';
+  const weatherImage = getWeatherImage(main, weatherId);
 
 
   return (
-    <Container maxWidth='xl'>
-      <Header
-        onSearch={(value) => search(value)}
-        onGeolocation={getGeolocation}
-        onToggleFavorites={() => setIsFavoritesOpen((prev) => !prev)}
-        geoIsLoading={geoIsLoading}
-        citiesSlot={
-          !citiesLoading && !citiesError && cities.length > 0 && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10 }}>
-              <CityList
-                cities={cities}
-                onSelect={(city) => {
-                  setSelectedCity(city)
-                  getReceiveWeather(city)
-                  clear()
-                }} />
-            </div>
-          )
-        }
-        favoritesSlot={
-          isFavoritesOpen && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, minWidth: '240px' }}>
-              <FavoriteList
-                onSelect={(city) => {
-                  setSelectedCity(city)
-                  getReceiveWeather(city)
-                  setIsFavoritesOpen(false)
+    <Box sx={{ position: 'relative', minHeight: '100dvh' }}>
+      {isRain && <Rain />}
+      {isSnow && <Snow />}
+
+      <PageBackground background={heroBg} />
+      <Container maxWidth='xl' sx={{ position: 'relative', zIndex: 1 }}>
+        <Header
+          onSearch={(value) => search(value)}
+          onGeolocation={getGeolocation}
+          onToggleFavorites={() => setIsFavoritesOpen((prev) => !prev)}
+          geoIsLoading={geoIsLoading}
+          citiesSlot={
+            !citiesLoading && !citiesError && cities.length > 0 && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10 }}>
+                <CityList
+                  cities={cities}
+                  onSelect={(city) => {
+                    setSelectedCity(city)
+                    getReceiveWeather(city)
+                    clear()
+                  }} />
+              </div>
+            )
+          }
+          favoritesSlot={
+            isFavoritesOpen && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, minWidth: '240px' }}>
+                <FavoriteList
+                  onSelect={(city) => {
+                    setSelectedCity(city)
+                    getReceiveWeather(city)
+                    setIsFavoritesOpen(false)
+                  }}
+                  isOpen={isFavoritesOpen}
+                />
+              </div>
+            )
+          }
+        />
+
+        {geoError && <p style={{ color: "error" }}>{geoError}</p>}
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 20,
+            mt: 2
+          }}
+        >
+
+          <Widget>
+            <Box sx={{ display: 'flex', justifyContent: 'center', maxHeight: 380, maxWidth: 380 }}>
+              <img
+                src={weatherImage}
+                alt=""
+                style={{
+                  maxWidth: '80%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                  filter: 'drop-shadow(0 12px 32px rgba(0,0,0,0.5))'
                 }}
-                isOpen={isFavoritesOpen}
               />
-            </div>
-          )
-        }
-      />
+            </Box>
+          </Widget>
 
-      {geoError && <p style={{ color: "error" }}>{geoError}</p>}
+          {(weatherLoading || weather || weatherError) && (
+            <Widget>
+              {weatherLoading && <p>Загружаю погоду</p>}
+              {weatherError && <p style={{ color: 'error' }}>{weatherError}</p>}
+              {weather && !weatherLoading && selectedCity && (
+                <WeatherCard weather={weather} city={selectedCity} />
+              )}
+            </Widget>
+          )}
 
+        </Box>
 
-
-      {weatherLoading && <p>Загружаю погоду</p>}
-      {weatherError && <p>{weatherError}</p>}
-      {weather && !weatherLoading && selectedCity && (
-        <WeatherCard weather={weather} city={selectedCity} />
-      )}
-
-      {forecastLoading && <p>Загружаю погоду</p>}
-      {forecastError && <p>{forecastError}</p>}
-      {forecast && !forecastLoading && <Forecast forecast={forecast} />}
-
-    </Container>
+        <Box sx={{ mt: 3 }}>
+          {forecastLoading && <p>Загружаю погоду</p>}
+          {forecastError && <p style={{ color: 'error' }}>{forecastError}</p>}
+          {forecast && !forecastLoading && <Forecast forecast={forecast} />}
+        </Box>
+      </Container>
+    </Box>
   )
 }
 
